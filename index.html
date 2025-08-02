@@ -33,6 +33,37 @@
         <header class="mb-6">
             <h1 class="text-2xl font-bold text-center mb-2">🚀 Claude CLI - WORKING FRONTEND</h1>
             <p class="text-center text-gray-400">Backend: <span id="backend-status" class="text-red-400">Checking...</span></p>
+            
+            <!-- GitHub Repository Settings -->
+            <div class="bg-gray-800 rounded-lg p-4 mt-4">
+                <h3 class="text-lg font-semibold mb-3 text-center">GitHub Repository Settings</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Repository Owner</label>
+                        <input 
+                            type="text" 
+                            id="repo-owner" 
+                            class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
+                            placeholder="e.g., bhuman-ai"
+                            value="bhuman-ai"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Repository Name</label>
+                        <input 
+                            type="text" 
+                            id="repo-name" 
+                            class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
+                            placeholder="e.g., gesture_generator"
+                            value="gesture_generator"
+                        />
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <span class="text-sm text-gray-400">Issues will be created in: </span>
+                    <span id="current-repo" class="text-blue-400 font-mono">bhuman-ai/gesture_generator</span>
+                </div>
+            </div>
         </header>
 
         <div class="bg-black rounded-lg p-4 mb-4 min-h-96">
@@ -82,9 +113,22 @@
         const executeBtn = document.getElementById('execute-btn');
         const backendStatus = document.getElementById('backend-status');
         const backendUrl = document.getElementById('backend-url');
+        const repoOwner = document.getElementById('repo-owner');
+        const repoName = document.getElementById('repo-name');
+        const currentRepo = document.getElementById('current-repo');
         
         // Set backend URL display
         backendUrl.textContent = API_BASE;
+        
+        // Update repository display when inputs change
+        function updateRepoDisplay() {
+            const owner = repoOwner.value || 'owner';
+            const name = repoName.value || 'repo';
+            currentRepo.textContent = `${owner}/${name}`;
+        }
+        
+        repoOwner.addEventListener('input', updateRepoDisplay);
+        repoName.addEventListener('input', updateRepoDisplay);
 
         // Check backend health
         async function checkBackendHealth() {
@@ -132,10 +176,14 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-GitHub-Repo-Owner': repoOwner.value || 'bhuman-ai',
+                        'X-GitHub-Repo-Name': repoName.value || 'gesture_generator'
                     },
                     body: JSON.stringify({
                         command: command,
-                        sessionId: 'simple-frontend-' + Date.now()
+                        sessionId: 'simple-frontend-' + Date.now(),
+                        repoOwner: repoOwner.value || 'bhuman-ai',
+                        repoName: repoName.value || 'gesture_generator'
                     })
                 });
 
